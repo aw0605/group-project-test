@@ -1,4 +1,4 @@
-export const products = [
+const products = [
   {
     id: 1,
     title: "야구공",
@@ -54,3 +54,4 @@ export const products = [
     storage: 2,
   },
 ];
+export default products;
