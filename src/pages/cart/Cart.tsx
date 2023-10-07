@@ -132,7 +132,7 @@ const Cart: FC = () => {
       <div className="price-div">
         <div className="total-product-price">
           <p>
-            총 상품가격 <span>원</span>
+            총 상품가격 asvasl;djv;sjazvjl;jxl;jlk;j <span>원</span>
           </p>
         </div>
         <p>+</p>
