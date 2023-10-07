@@ -95,7 +95,7 @@ const Cart: FC = () => {
             <MdArrowForwardIos />
           </span>
           <p>
-            <span>02</span> 주문/결제
+            <span>02</span> 주문/결제dkdkdkdkdkdkdkdk
           </p>
         </div>
       </div>
