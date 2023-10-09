@@ -1,16 +1,15 @@
-// import { configureStore, combineReducers } from "@reduxjs/toolkit";
-// import cartReducer from "../slice/cartSlice";
-// import userReducer from "../slice/userSlice";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import cartReducer from "../slice/cartSlice";
 
-// const rootReducer = combineReducers({
-//   cart: cartReducer,
-//   user: userReducer,
-//   // 다른 리듀서들도 추가 가능
-// });
+export const rootReducer = combineReducers({
+  cart: cartReducer,
+});
 
-// const store = configureStore({
-//   reducer: rootReducer,
-//   // 미들웨어 등 다른 설정들도 추가 가능
-// });
+const store = configureStore({
+  reducer: rootReducer,
+});
 
-// export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;

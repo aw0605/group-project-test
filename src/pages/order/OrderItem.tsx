@@ -1,25 +1,37 @@
-// import React from "react";
+import React, { FC } from "react";
+import styled from "styled-components";
+import { CartItemType } from "../../types";
 
-// const OrderItem = ({ item }) => {
-//   return (
-//     <div>
-//       <h3>{item.productName}</h3>
-//       <p>수량: {item.quantity}</p>
-//       <p>배송비: {item.shippingCost}원</p>
-//     </div>
-//   );
-// };
+type SelectedItemProps = {
+  item: CartItemType;
+};
 
-// export default OrderItem;
-import React from "react";
-
-const OrderItem = () => {
+const OrderItem: FC<SelectedItemProps> = ({ item }) => {
   return (
-    <tr>
-      <td>상품명, 상품 세부설명</td>
-      <td>상품수량 / 배송비</td>
-    </tr>
+    <TR>
+      <td>
+        {item.title}, {item.desc}
+      </td>
+      <td>수량 {item.amount}개</td>
+    </TR>
   );
 };
 
 export default OrderItem;
+
+const TR = styled.tr`
+  width: 100%;
+  td:first-child {
+    width: 80%;
+    font-size: 1rem;
+    text-align: left;
+    padding: 14px 0 0 14px;
+  }
+  td:last-child {
+    width: 20%;
+    font-size: 0.875rem;
+    color: #929292;
+    text-align: center;
+    padding: 14px 0;
+  }
+`;

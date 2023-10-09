@@ -1,12 +1,13 @@
-export type userType = {
+export type UserType = {
   name: string;
   nickname: string;
   email: string;
   phone: string;
   address: string;
+  paymoney: number;
 };
 
-export type cartItemType = {
+export type CartItemType = {
   id: number;
   title: string;
   price: number;
