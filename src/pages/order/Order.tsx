@@ -109,6 +109,13 @@ const Order: FC = () => {
               <span>02</span>
               <p>주문/결제</p>
             </OrderStep>
+            <span>
+              <MdArrowForwardIos color="#afafaf" />
+            </span>
+            <div>
+              <span>03</span>
+              <p>주문완료</p>
+            </div>
           </StepWrap>
         </HeaderWrap>
         <Form onSubmit={handlePayment}>

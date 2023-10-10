@@ -131,6 +131,13 @@ const Cart: FC = () => {
               <span>02</span>
               <p>주문/결제</p>
             </div>
+            <span>
+              <MdArrowForwardIos color="#afafaf" />
+            </span>
+            <div>
+              <span>03</span>
+              <p>주문완료</p>
+            </div>
           </StepWrap>
         </HeaderWrap>
 

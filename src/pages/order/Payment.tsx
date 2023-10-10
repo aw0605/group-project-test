@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
 import { CartItemType, UserType } from "../../types";
+import tosspay from "../../assets/img/tosspay.png";
 
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
@@ -204,12 +205,12 @@ const Payment: FC<UserProps> = ({
                 <div>
                   <input
                     type="radio"
-                    id="토스페이"
-                    value="토스페이"
-                    checked={selectedPayment === "토스페이"}
+                    id="tosspay"
+                    value="tosspay"
+                    checked={selectedPayment === "tosspay"}
                     onChange={handlePaymentChange}
                   />
-                  <label htmlFor="토스페이">토스페이</label>
+                  <label htmlFor="tosspay">tosspay</label>
                 </div>
               </SelectBox>
               <PaymentFormBox>
@@ -247,9 +248,11 @@ const Payment: FC<UserProps> = ({
                   </div>
                 )}
 
-                {selectedPayment === "토스페이" && (
+                {selectedPayment === "tosspay" && (
                   <div className="tosspay">
-                    <button onClick={handleTossPay}>토스로 결제하기</button>
+                    <button onClick={handleTossPay}>
+                      <img src={tosspay} alt="tosspay" />
+                    </button>
                   </div>
                 )}
               </PaymentFormBox>
@@ -324,23 +327,14 @@ const PaymentFormBox = styled.div`
     margin-right: 5px;
   }
   button {
-    padding: 10px 25px;
+    padding: 20px 30px;
     border-radius: 3px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #fff;
-    background-color: #0078ff;
+    border: 1px solid #6e6e6e;
+    background-color: #fff;
     cursor: pointer;
   }
   .account {
     display: flex;
-  }
-  .card-info {
-    display: flex;
-    padding-bottom: 14px;
-    margin-bottom: 14px;
-    border-bottom: 1px solid #a3a3a3;
   }
   .paymoney {
     .paymoney-info {
@@ -357,6 +351,11 @@ const PaymentFormBox = styled.div`
     }
     p {
       font-size: 0.75rem;
+    }
+  }
+  .tosspay {
+    img {
+      width: 100px;
     }
   }
 `;

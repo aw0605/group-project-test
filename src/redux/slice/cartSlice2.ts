@@ -1,16 +1,27 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { CartItemType } from "../../types";
 
+// 선택된 아이템들을 sessionStorage에 저장하는 함수
+const saveToSessionStorage = (selectedItems: CartItemType[]) => {
+  sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+};
+
+// sessionStorage에서 선택된 아이템들을 불러오는 함수
+const loadFromSessionStorage = (): CartItemType[] => {
+  const savedData = sessionStorage.getItem("selectedItems");
+  return savedData ? JSON.parse(savedData) : [];
+};
+
 declare interface CartState {
   items: CartItemType[];
   selectedItems: CartItemType[];
   order: CartItemType[];
 }
 
-//items는 장바구니 데이터, selectedItems는 현재 장바구니에서 선택된 데이터, order는 결제페이지에서 확인하는 데이터입니다.
+//items는 장바구니 데이터, selectedItems는 현재 장바구니에서 선택된 데이터
 const initialState: CartState = {
   items: [], //장바구니에 보여질화면
-  selectedItems: [],
+  selectedItems: loadFromSessionStorage(),
   order: [], //결제화면에 보여줄 아이템들
 };
 
@@ -48,6 +59,7 @@ const cartSlice = createSlice({
       } else {
         state.selectedItems.push(currentItem);
       }
+      saveToSessionStorage(state.selectedItems);
     },
 
     toggleSelectAll: (state) => {
@@ -58,6 +70,7 @@ const cartSlice = createSlice({
           (item) => item.amount <= item.stock_quantity
         );
       }
+      saveToSessionStorage(state.selectedItems);
     },
 
     updateItemAmount: (
@@ -111,8 +124,6 @@ export const {
   deleteItem,
   deleteSelected,
   resetSelectedItems,
-  //   moveOrder,
-  //   selectedOrder,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

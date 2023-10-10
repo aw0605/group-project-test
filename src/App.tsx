@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Cart from "./pages/Cart/Cart";
 import Order from "./pages/Order/Order";
+import OrderResult from "./pages/Order/OrderResult";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,6 +30,10 @@ function App() {
     {
       path: "/order", // 주문,결제 페이지 경로
       element: <Order />,
+    },
+    {
+      path: "/order/result", // 주문완료 페이지 경로
+      element: <OrderResult />,
     },
   ]);
   return <RouterProvider router={router} />;
