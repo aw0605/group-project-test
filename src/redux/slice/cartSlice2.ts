@@ -16,10 +16,12 @@ const initialState: CartState = {
 
 const allAvailableItemsSelected = (state: CartState) => {
   const availableItems = state.items.filter(
-    (item) => item.amount <= item.storage
+    (item) => item.amount <= item.stock_quantity
   );
   return availableItems.every((item) =>
-    state.selectedItems.some((selectedItem) => selectedItem.id === item.id)
+    state.selectedItems.some(
+      (selectedItem) => selectedItem.product_id === item.product_id
+    )
   );
 };
 
@@ -36,12 +38,12 @@ const cartSlice = createSlice({
     toggleSelectItem: (state, action: PayloadAction<CartItemType>) => {
       const currentItem = action.payload;
       const existingItem = state.selectedItems.find(
-        (item) => item.id === currentItem.id
+        (item) => item.product_id === currentItem.product_id
       );
 
       if (existingItem) {
         state.selectedItems = state.selectedItems.filter(
-          (item) => item.id !== currentItem.id
+          (item) => item.product_id !== currentItem.product_id
         );
       } else {
         state.selectedItems.push(currentItem);
@@ -53,24 +55,24 @@ const cartSlice = createSlice({
         state.selectedItems = [];
       } else {
         state.selectedItems = state.items.filter(
-          (item) => item.amount <= item.storage
+          (item) => item.amount <= item.stock_quantity
         );
       }
     },
 
     updateItemAmount: (
       state,
-      action: PayloadAction<{ id: number; amount: number }>
+      action: PayloadAction<{ product_id: number; amount: number }>
     ) => {
-      const { id, amount } = action.payload;
-      const item = state.items.find((i) => i.id === id);
+      const { product_id, amount } = action.payload;
+      const item = state.items.find((i) => i.product_id === product_id);
 
       if (item) {
         item.amount = amount;
 
         // 선택한 상품도 업데이트
         const selectedItem = state.selectedItems.find(
-          (selected) => selected.id === id
+          (selected) => selected.product_id === product_id
         );
         if (selectedItem) {
           selectedItem.amount = amount;
@@ -79,13 +81,17 @@ const cartSlice = createSlice({
     },
 
     deleteItem: (state, action: PayloadAction<number>) => {
-      const id = action.payload;
-      state.items = state.items.filter((item) => item.id !== id);
+      const product_id = action.payload;
+      state.items = state.items.filter(
+        (item) => item.product_id !== product_id
+      );
     },
     deleteSelected: (state) => {
-      const selectedItemIds = state.selectedItems.map((item) => item.id);
+      const selectedItemIds = state.selectedItems.map(
+        (item) => item.product_id
+      );
       state.items = state.items.filter(
-        (item) => !selectedItemIds.includes(item.id)
+        (item) => !selectedItemIds.includes(item.product_id)
       );
       state.selectedItems = [];
     },

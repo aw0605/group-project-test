@@ -27,10 +27,12 @@ const initialState: CartState = {
 
 const allAvailableItemsSelected = (state: CartState) => {
   const availableItems = state.items.filter(
-    (item) => item.amount <= item.storage
+    (item) => item.amount <= item.stock_quantity
   );
   return availableItems.every((item) =>
-    state.selectedItems.some((selectedItem) => selectedItem.id === item.id)
+    state.selectedItems.some(
+      (selectedItem) => selectedItem.product_id === item.product_id
+    )
   );
 };
 
@@ -47,12 +49,12 @@ const cartSlice = createSlice({
     toggleSelectItem: (state, action: PayloadAction<CartItemType>) => {
       const currentItem = action.payload;
       const existingItem = state.selectedItems.find(
-        (item) => item.id === currentItem.id
+        (item) => item.product_id === currentItem.product_id
       );
 
       if (existingItem) {
         state.selectedItems = state.selectedItems.filter(
-          (item) => item.id !== currentItem.id
+          (item) => item.product_id !== currentItem.product_id
         );
       } else {
         state.selectedItems.push(currentItem);
@@ -63,13 +65,13 @@ const cartSlice = createSlice({
     // toggleSelectItem: (state, action: PayloadAction<CartItemType>) => {
     //   const currentItem = action.payload;
     //   const existingItemIndex = state.selectedItems.findIndex(
-    //     (item) => item.id === currentItem.id
+    //     (item) => item.product_id === currentItem.product_id
     //   );
 
     //   if (existingItemIndex !== -1) {
     //     // state.selectedItems.splice(existingItemIndex, 1);
     //     state.selectedItems = state.selectedItems.filter(
-    //       (item) => item.id !== currentItem.id
+    //       (item) => item.product_id !== currentItem.product_id
     //     );
     //   } else {
     //     state.selectedItems.push(currentItem);
@@ -78,16 +80,16 @@ const cartSlice = createSlice({
     // selectItem: (state, action: PayloadAction<CartItemType>) => {
     //   const currentItem = action.payload;
     //   const existingItem = state.items.find(
-    //     (item) => item.id === currentItem.id
+    //     (item) => item.product_id === currentItem.product_id
     //   );
     //   if (existingItem && !state.selectedItems.includes(existingItem)) {
     //     state.selectedItems.push(existingItem);
     //   }
     // },
     // deselectItem: (state, action: PayloadAction<number>) => {
-    //   const id = action.payload;
+    //   const product_id = action.payload;
     //   state.selectedItems = state.selectedItems.filter(
-    //     (item) => item.id !== id
+    //     (item) => item.product_id !== product_id
     //   );
     // },
 
@@ -103,7 +105,7 @@ const cartSlice = createSlice({
         state.selectedItems = [];
       } else {
         state.selectedItems = state.items.filter(
-          (item) => item.amount <= item.storage
+          (item) => item.amount <= item.stock_quantity
         );
       }
 
@@ -126,17 +128,17 @@ const cartSlice = createSlice({
 
     updateItemAmount: (
       state,
-      action: PayloadAction<{ id: number; amount: number }>
+      action: PayloadAction<{ product_id: number; amount: number }>
     ) => {
-      const { id, amount } = action.payload;
-      const item = state.items.find((i) => i.id === id);
+      const { product_id, amount } = action.payload;
+      const item = state.items.find((i) => i.product_id === product_id);
 
       if (item) {
         item.amount = amount;
 
         // 선택한 상품도 업데이트
         const selectedItem = state.selectedItems.find(
-          (selected) => selected.id === id
+          (selected) => selected.product_id === product_id
         );
         if (selectedItem) {
           selectedItem.amount = amount;
@@ -145,12 +147,12 @@ const cartSlice = createSlice({
     },
 
     // incrementQuantity: (state, action: PayloadAction<number>) => {
-    //   const id = action.payload;
-    //   const item = state.items.find((item) => item.id === id);
+    //   const product_id = action.payload;
+    //   const item = state.items.find((item) => item.product_id === product_id);
     //   if (item) {
     //     item.amount += 1;
     //     const selectedItem = state.selectedItems.find(
-    //       (selected) => selected.id === id
+    //       (selected) => selected.product_id === product_id
     //     );
     //     if (selectedItem) {
     //       selectedItem.amount = item.amount;
@@ -158,12 +160,12 @@ const cartSlice = createSlice({
     //   }
     // },
     // decrementQuantity: (state, action: PayloadAction<number>) => {
-    //   const id = action.payload;
-    //   const item = state.items.find((item) => item.id === id);
+    //   const product_id = action.payload;
+    //   const item = state.items.find((item) => item.product_id === product_id);
     //   if (item && item.amount > 1) {
     //     item.amount -= 1;
     //     const selectedItem = state.selectedItems.find(
-    //       (selected) => selected.id === id
+    //       (selected) => selected.product_id === product_id
     //     );
     //     if (selectedItem) {
     //       selectedItem.amount = item.amount;
@@ -172,17 +174,21 @@ const cartSlice = createSlice({
     // },
 
     deleteItem: (state, action: PayloadAction<number>) => {
-      const id = action.payload;
-      state.items = state.items.filter((item) => item.id !== id);
+      const product_id = action.payload;
+      state.items = state.items.filter(
+        (item) => item.product_id !== product_id
+      );
     },
     // deleteAll: (state) => {
     //   state.items = [];
     //   state.selectedItems = [];
     // },
     deleteSelected: (state) => {
-      const selectedItemIds = state.selectedItems.map((item) => item.id);
+      const selectedItemIds = state.selectedItems.map(
+        (item) => item.product_id
+      );
       state.items = state.items.filter(
-        (item) => !selectedItemIds.includes(item.id)
+        (item) => !selectedItemIds.includes(item.product_id)
       );
       state.selectedItems = [];
     },
@@ -193,15 +199,14 @@ const cartSlice = createSlice({
     // moveOrder: (state) => {
     //   state.order = state.selectedItems.map((item) => ({
     //     amount: item.amount,
-    //     optionDetail: item.optionDetail,
-    //     productIdx: item.productIdx,
+    //     product_idx: item.product_idx,
     //   }));
     //   console.log(state.order);
     // },
     // selectedOrder: (state, action) => {
-    //   const orderItem = state.items.find((item) => item.id === action.payload);
-    //   const { amount, optionDetail, productIdx } = orderItem as OrderItem;
-    //   state.order = [{ amount, optionDetail, productIdx }];
+    //   const orderItem = state.items.find((item) => item.product_id === action.payload);
+    //   const { amount, item.product_idx } = orderItem as OrderItem;
+    //   state.order = [{ amount, product_idx }];
     // },
   },
 });

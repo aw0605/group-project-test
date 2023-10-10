@@ -9,9 +9,7 @@ type SelectedItemProps = {
 const OrderItem: FC<SelectedItemProps> = ({ item }) => {
   return (
     <TR>
-      <td>
-        {item.title}, {item.desc}
-      </td>
+      <td>{item.product_name}</td>
       <td>수량 {item.amount}개</td>
     </TR>
   );

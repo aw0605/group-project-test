@@ -9,9 +9,34 @@ type UserProps = {
 const Payment: FC<UserProps> = ({ userdata }) => {
   const [selectedPayment, setSelectedPayment] = useState("계좌이체");
 
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountValid, setAccountValid] = useState(true);
+
   const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedPayment(e.target.value);
   };
+
+  const handleAccountNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // 모두 숫자
+    const isNumber = /^[0-9]*$/.test(e.target.value);
+    // 모두 숫자이고 최대 14개인지
+    if (isNumber && e.target.value.length <= 14) {
+      setAccountNumber(e.target.value);
+    }
+  };
+  // 입력된 계좌번호 값이 11개 이하이고 onBlur시 에러 메시지 띄우기
+  const validateAccountNumber = () => {
+    if (accountNumber.length === 0) {
+      setAccountValid(true);
+    } else if (accountNumber.length < 11) {
+      setAccountValid(false);
+    } else {
+      setAccountValid(true);
+    }
+  };
+
   return (
     <Wrap>
       <Title>결제정보</Title>
@@ -63,6 +88,16 @@ const Payment: FC<UserProps> = ({ userdata }) => {
                   />
                   <label htmlFor="쿠페이머니">쿠페이머니</label>
                 </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="토스페이먼츠"
+                    value="토스페이먼츠"
+                    checked={selectedPayment === "토스페이먼츠"}
+                    onChange={handlePaymentChange}
+                  />
+                  <label htmlFor="토스페이먼츠">토스페이먼츠</label>
+                </div>
               </SelectBox>
               <PaymentFormBox>
                 {selectedPayment === "계좌이체" && (
@@ -76,12 +111,18 @@ const Payment: FC<UserProps> = ({ userdata }) => {
                     </select>
                     <div className="account-number">
                       <span>계좌번호</span>
-                      <input type="text" />
+                      <input
+                        type="text"
+                        value={accountNumber}
+                        onChange={handleAccountNumberChange}
+                        onBlur={validateAccountNumber}
+                        placeholder="숫자만 입력하세요"
+                      />
                     </div>
                   </div>
                 )}
 
-                {selectedPayment === "신용/체크카드" && (
+                {/* {selectedPayment === "신용/체크카드" && (
                   <div className="card">
                     <div className="card-info">
                       <select name="card" id="card">
@@ -119,8 +160,26 @@ const Payment: FC<UserProps> = ({ userdata }) => {
                       * 잔액이 부족할 경우, 정상적인 결제가 이루어지지 않습니다.
                     </p>
                   </div>
+                )} */}
+
+                {selectedPayment === "토스페이먼츠" && (
+                  <div className="tosspay">
+                    <div className="account-number">
+                      <span>토스페이먼츠</span>
+                      <input
+                        type="text"
+                        value={accountNumber}
+                        onChange={handleAccountNumberChange}
+                        onBlur={validateAccountNumber}
+                        placeholder="숫자만 입력하세요"
+                      />
+                    </div>
+                  </div>
                 )}
               </PaymentFormBox>
+              {!accountValid && (
+                <ErrorAccountMessage>잘못된 계좌번호입니다</ErrorAccountMessage>
+              )}
             </td>
           </tr>
         </tbody>
@@ -183,7 +242,7 @@ const PaymentFormBox = styled.div`
     margin-right: 15px;
   }
   input {
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
   span {
     margin-right: 5px;
@@ -214,4 +273,11 @@ const PaymentFormBox = styled.div`
       font-size: 0.75rem;
     }
   }
+`;
+
+const ErrorAccountMessage = styled.div`
+  color: #fd0000;
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin: 10px 0 0 10px;
 `;

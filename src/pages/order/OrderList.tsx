@@ -15,7 +15,7 @@ const OrderList: FC<SelectedItemProps> = ({ selectedItems }) => {
       <Table>
         <tbody>
           {selectedItems.map((item) => (
-            <OrderItem key={item.id} item={item} />
+            <OrderItem key={item.product_id} item={item} />
           ))}
         </tbody>
       </Table>

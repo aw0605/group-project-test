@@ -30,8 +30,10 @@ const Cart: FC = () => {
   //   items.length > 0 && selectedItems.length === items.length;
   const isAllChecked = items.every(
     (item) =>
-      item.amount > item.storage ||
-      selectedItems.some((selectedItem) => selectedItem.id === item.id)
+      item.amount > item.stock_quantity ||
+      selectedItems.some(
+        (selectedItem) => selectedItem.product_id === item.product_id
+      )
   );
 
   useEffect(() => {
@@ -156,7 +158,7 @@ const Cart: FC = () => {
                 </thead>
                 <tbody>
                   {cartdata?.map((item) => (
-                    <CartItem key={item.id} item={item} />
+                    <CartItem key={item.product_id} item={item} />
                   ))}
                 </tbody>
               </CartItemTable>

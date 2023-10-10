@@ -18,12 +18,14 @@ type CartItemProps = {
 };
 
 const CartItem: FC<CartItemProps> = ({ item }) => {
-  const isSoldOut = item.amount > item.storage;
+  const isSoldOut = item.amount > item.stock_quantity;
 
   const dispatch = useDispatch();
 
   const isSelected = useSelector((state: RootState) =>
-    state.cart.selectedItems.some((selectedItem) => selectedItem.id === item.id)
+    state.cart.selectedItems.some(
+      (selectedItem) => selectedItem.product_id === item.product_id
+    )
   );
 
   //해당 상품을 선택하거나 선택 취소합니다.
@@ -97,11 +99,16 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
       //   amount: updatedAmount
       // });
 
-      dispatch(updateItemAmount({ id: item.id, amount: updatedAmount }));
+      dispatch(
+        updateItemAmount({
+          product_id: item.product_id,
+          amount: updatedAmount,
+        })
+      );
 
       // 콘솔에 현재 수량과 변경 후 수량을 출력합니다.
       console.log(
-        `Item ID: ${item.id}, Previous Amount: ${item.amount}, Updated Amount: ${updatedAmount}`
+        `Item ID: ${item.product_id}, Previous Amount: ${item.amount}, Updated Amount: ${updatedAmount}`
       );
     }
   };
@@ -119,11 +126,9 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
           />
         </td>
         <td rowSpan={2}>
-          <ProductImg src={item.img} alt="임시 이미지" />
+          <ProductImg src={item.img1} alt="임시 이미지" />
         </td>
-        <ProductInfo colSpan={3}>
-          {item.title}, {item.desc}
-        </ProductInfo>
+        <ProductInfo colSpan={3}>{item.product_name}</ProductInfo>
         <PriceInfo rowSpan={2}>
           {isSoldOut ? (
             <SoldOutText>품절</SoldOutText>
@@ -150,7 +155,9 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
           </AmountBox>
         </td>
         <td>
-          <DeleteButton onClick={() => handleDelete(item.id)}>X</DeleteButton>
+          <DeleteButton onClick={() => handleDelete(item.product_id)}>
+            X
+          </DeleteButton>
         </td>
       </tr>
     </>

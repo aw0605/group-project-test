@@ -1,6 +1,5 @@
 export type UserType = {
   name: string;
-  nickname: string;
   email: string;
   phone: string;
   address: string;
@@ -8,14 +7,10 @@ export type UserType = {
 };
 
 export type CartItemType = {
-  id: number;
-  title: string;
+  product_id: number;
+  product_name: string;
   price: number;
-  shippingprice: number;
-  img: string;
-  desc: string;
-  category: string;
-  seller: string;
+  img1: string;
   amount: number;
-  storage: number;
+  stock_quantity: number;
 };
