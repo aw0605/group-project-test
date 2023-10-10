@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { TiShoppingCart } from "react-icons/ti";
 import bakepang from "../../assets/img/headerImg/Bakepang.png";
 import CartItem from "./CartItem";
+import CartErrorModal from "./CartErrorModal";
 import { CartItemType } from "../../types";
 
 import {
@@ -17,8 +18,11 @@ import {
 import { RootState } from "../../redux/store/store";
 
 const Cart: FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [cartdata, setCartData] = useState<CartItemType[] | null>(null);
+  const [showModal, setShowModal] = useState(false); // 모달 상태 관리
+  const [modalMessage, setModalMessage] = useState(""); // 모달 메시지 관리
 
   // Redux state에서 선택된 아이템들과 전체 아이템들을 가져옵니다.
   const selectedItems = useSelector(
@@ -35,6 +39,23 @@ const Cart: FC = () => {
         (selectedItem) => selectedItem.product_id === item.product_id
       )
   );
+
+  // 총 주문금액을 계산
+  const totalOrderAmount = selectedItems.reduce(
+    (acc, item) => acc + item.price * item.amount,
+    0
+  );
+
+  const handleBuyButtonClick = () => {
+    if (selectedItems.length === 0) {
+      // 선택한 상품이 없을 때 모달 표시
+      setModalMessage("상품을 선택해주세요.");
+      setShowModal(true);
+    } else {
+      // 선택한 상품이 있을 때 주문/결제 페이지로 이동
+      navigate("/order");
+    }
+  };
 
   useEffect(() => {
     axios
@@ -53,7 +74,12 @@ const Cart: FC = () => {
 
     // sessionStorage에 저장
     sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
-  }, [selectedItems]);
+    // Cart 페이지에서 totalOrderAmount 계산 후 session storage에 저장
+    sessionStorage.setItem(
+      "totalOrderAmount",
+      JSON.stringify(totalOrderAmount)
+    );
+  }, [dispatch, selectedItems, totalOrderAmount]);
 
   const handleSelectAll = () => {
     dispatch(toggleSelectAll());
@@ -79,12 +105,6 @@ const Cart: FC = () => {
     dispatch(deleteSelected());
     console.log("After delete selected items:", items); // 삭제 후
   };
-
-  // 총 주문금액을 계산
-  const totalOrderAmount = selectedItems.reduce(
-    (acc, item) => acc + item.price * item.amount,
-    0
-  );
 
   return (
     <Wrap>
@@ -196,10 +216,17 @@ const Cart: FC = () => {
               <Link to={"/"}>
                 <ContinueButton>계속 쇼핑하기</ContinueButton>
               </Link>
-              <Link to={"/order"}>
+              {/* <Link to={"/order"}>
                 <BuyButton>구매하기</BuyButton>
-              </Link>
+              </Link> */}
+              <BuyButton onClick={handleBuyButtonClick}>구매하기</BuyButton>
             </ButtonWrap>
+            {showModal && (
+              <CartErrorModal
+                message={modalMessage}
+                onClose={() => setShowModal(false)}
+              />
+            )}
           </>
         )}
       </Container>

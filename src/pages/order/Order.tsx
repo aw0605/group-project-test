@@ -13,7 +13,8 @@ import { UserType, CartItemType } from "../../types";
 
 import { setItems } from "../../redux/slice/cartSlice";
 
-const OrderPage: FC = () => {
+const Order: FC = () => {
+  const dispatch = useDispatch();
   const [userdata, setUserData] = useState<UserType | null>(null);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const OrderPage: FC = () => {
   // const dispatch = useDispatch();
 
   const [selectedItems, setSelectedItems] = useState<CartItemType[]>([]);
+  const [totalOrderAmount, setTotalOrderAmount] = useState<number>(0);
 
   useEffect(() => {
     const savedSelectedItems = sessionStorage.getItem("selectedItems");
@@ -41,29 +43,43 @@ const OrderPage: FC = () => {
       const parsedItems: CartItemType[] = JSON.parse(savedSelectedItems);
       setSelectedItems(parsedItems);
     }
+
+    const savedTotalOrderAmount = sessionStorage.getItem("totalOrderAmount");
+    if (savedTotalOrderAmount) {
+      const parsedTotalOrderAmount = JSON.parse(savedTotalOrderAmount);
+      setTotalOrderAmount(parsedTotalOrderAmount);
+    }
   }, []);
 
-  //   const handleSubmit = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       "https://3c2167fb-e55d-4327-8405-a650c719e040.mock.pstmn.io/payment",
-  //       {
-  //         userData: userdata,  // 주문자 정보
-  //         items: selectedItems // 주문 목록
-  //       }
-  //     );
-  //     if (response.status === 200) {
-  //       console.log("주문이 성공적으로 완료되었습니다.");
-  //       // 성공 시 다른 페이지로 이동하거나 사용자에게 메시지 표시 등의 후속 조치를 수행할 수 있습니다.
-  //     } else {
-  //       console.error("주문 실패:", response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("주문 중 오류 발생:", error);
+  // const handlePayment = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   if (!userdata) {
+  //     console.error("사용자 데이터가 없습니다.");
+  //     return;
   //   }
+
+  //   axios
+  //     .post(`/users/${userdata.id}/payments`, {
+  //       userId: userdata?.id,
+  //       address: userdata?.address,
+  //       OrderItem: selectedItems,
+  //       total_price: totalOrderAmount,
+  //     })
+  //     .then((Response) => {
+  //       // 주문 성공 시 처리
+  //       console.log("주문이 성공적으로 완료되었습니다.");
+
+  //       // 성공적으로 주문이 완료되면 selectedItems와 totalOrderAmount 초기화
+  //       dispatch(setItems([]));
+  //     })
+  //     .catch((error) => {
+  //       // 주문 실패 시 처리
+  //       console.error("주문을 처리하는 중 오류가 발생했습니다.", error);
+  //     });
   // };
 
-  const handlePayment = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("User Data:", userdata);
     console.log("Selected Items:", selectedItems);
@@ -95,13 +111,17 @@ const OrderPage: FC = () => {
             </OrderStep>
           </StepWrap>
         </HeaderWrap>
-        <Form>
+        <Form onSubmit={handlePayment}>
           {userdata && (
             <ContentsWrap>
               <BuyerInfo userdata={userdata} />
               <ShipInfo userdata={userdata} />
               <OrderList selectedItems={selectedItems} />
-              <Payment userdata={userdata} />
+              <Payment
+                userdata={userdata}
+                selectedItems={selectedItems}
+                totalOrderAmount={totalOrderAmount}
+              />
             </ContentsWrap>
           )}
           <AgreeBox>
@@ -112,7 +132,7 @@ const OrderPage: FC = () => {
             </span>
           </AgreeBox>
           <ButtonWrap>
-            <PaymentButton onClick={handlePayment}>결제하기</PaymentButton>
+            <PaymentButton type="submit">결제하기</PaymentButton>
           </ButtonWrap>
         </Form>
       </Container>
@@ -120,7 +140,7 @@ const OrderPage: FC = () => {
   );
 };
 
-export default OrderPage;
+export default Order;
 
 const Wrap = styled.div`
   width: 100%;
@@ -229,3 +249,23 @@ const PaymentButton = styled.button`
   color: #fff;
   cursor: pointer;
 `;
+
+//   const handleSubmit = async () => {
+//   try {
+//     const response = await axios.post(
+//       "https://3c2167fb-e55d-4327-8405-a650c719e040.mock.pstmn.io/payment",
+//       {
+//         userData: userdata,  // 주문자 정보
+//         items: selectedItems // 주문 목록
+//       }
+//     );
+//     if (response.status === 200) {
+//       console.log("주문이 성공적으로 완료되었습니다.");
+//       // 성공 시 다른 페이지로 이동하거나 사용자에게 메시지 표시 등의 후속 조치를 수행할 수 있습니다.
+//     } else {
+//       console.error("주문 실패:", response.data);
+//     }
+//   } catch (error) {
+//     console.error("주문 중 오류 발생:", error);
+//   }
+// };
